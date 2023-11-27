@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="content-wrapper">
+        <div class="container-fluid">
+            <div class="card md-3">
+                <div class="card-header">
+                    <h4><b>ユーザー一覧</b></h1>
+                </div>    
+                <div class="card-body">
+                    <div class="table table-responsive">
+                        <table id='user_list' width="100%" class="table table-striped table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <th class="text-center">ユーザー</th>
+                                <th class="text-center">画像</th>
+                            </tr>        
+                            </thead>  
+                            <tbody>
+                                {% for item in object_list %}  
+                                    <td class="text-center" style="width: 50%">{{ item.username }}</td>
+                                    <td class="text-center" style="width: 50%">
+                                {% if item.avatar %}
+                                        <img class="rounded img-fluid mx-auto d-block" src="{{ item.avatar.url }}"
+                                        id="avatar-thumbnail" alt="avatar_thumbnail">
+                                {% else %}
+                                    <img class="rounded img-fluid mx-auto d-block" alt="avatar_thumbnail">
+                                {% endif %}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>                     
+                        </table>        
+                    </div>    
+                </div>    
+            </div>    
+        </div>    
+    </div>
+{% endblock %}
