@@ -6,7 +6,7 @@ from .models import Post
 from .forms import PostCreateForm, PostUpdateForm
 from django.contrib import messages
 from django.urls import reverse_lazy
-from accounts.models import User
+from accounts.models import Relationship, User
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
@@ -32,12 +32,6 @@ class PostListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return Post.objects.all()
     
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        user = self.request.user
-        context['favourite_list'] = user.favourite_post.all()
-
-        return context
 
 class PostUpdateView(LoginRequiredMixin, UpdateView):
     model = Post
@@ -76,8 +70,45 @@ class MyPostsView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        user = self.request.user
 
         qs = Post.objects.filter(owner_id=self.request.user)
         context['my_posts_count'] = qs.count()
+        context['following_list'] = Relationship.objects.filter(follower_id=user.pk)
+        context['my_follow_list'] = (Relationship.objects.filter(follower_id=user.pk)).values_list('following_id', flat=True)
+        followings = (Relationship.objects.filter(follower_id=user.pk)).values_list('following_id')
+        context['following_count'] = User.objects.filter(id__in=followings).count()
+        followers = (Relationship.objects.filter(following_id=user.pk)).values_list('follower_id')
+        context['follower_count'] = followers.count()
         return context
     
+class FollowersView(LoginRequiredMixin, ListView):
+    template_name = 'microposts/followers.html'
+    model = Relationship
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)    
+        user = self.request.user
+
+        context['my_posts_count'] = Post.objects.filter(owner_id=self.request.user).count()
+        followings = (Relationship.objects.filter(follower_id=user.pk)).values_list('following_id')
+        context['following_list'] = User.objects.filter(id__in=followings)
+        context['following_count'] = User.objects.filter(id__in=followings).count()
+        followers = (Relationship.objects.filter(following_id=user.pk)).values_list('follower_id')
+        context['follower_list'] = User.objects.filter(id__in=followers)
+        return context
+    
+class FollowingView(LoginRequiredMixin, ListView):
+    template_name = 'microposts/followings.html'
+    model = Relationship
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+
+        context['my_posts_count'] = Post.objects.filter(owner_id=self.request.user).count()
+        followings = (Relationship.objects.filter(follower_id=user.pk)).values_list('following_id')
+        context['following_list'] = User.objects.filter(id__in=followings)
+        followers = (Relationship.objects.filter(following_id=user.pk)).values_list('follower_id')
+        context['follower_count'] = User.objects.filter(id__in=followers).count()
+        return context    

@@ -48,3 +48,15 @@ class User(AbstractUser, PermissionsMixin):
     
     groups = models.ManyToManyField(Group, blank=True, related_name='custom_user_groups')
     user_permissions = models.ManyToManyField(Permission, blank=True, related_name='custom_user_permissions')
+
+class Relationship(models.Model):
+    follower = models.ForeignKey(User, related_name='follower', on_delete=models.CASCADE)
+    following = models.ForeignKey(User, related_name='following', on_delete=models.CASCADE)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['follower', 'following'], name='user-relationship')
+        ]
+
+    def __str__(self):
+        return"{}:{}".format(self.follower.username, self.following.username)    

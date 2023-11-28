@@ -26,10 +26,10 @@
                     <ul class="nav nav-tabs nav-justified mb-3">
                         <li class="nav-item"><a href="{% url 'microposts:myposts' %}" class="nav-link active">MyPosts一覧
                             <span class="badge badge-secondary">{{ my_posts_count }}</span></a></li>
-                        <li class="nav-item"><a href="#" class="nav-link">Followings
-                            <span class="badge badge-secondary">"#"</span></a></li>
-                        <li class="nav-item"><a href="#" class="nav-link">Followers
-                            <span class="badge badge-secondary">"#"</span></a></li>       
+                        <li class="nav-item"><a href="{% url 'microposts:following' %}" class="nav-link">Followings
+                            <span class="badge badge-secondary">{{ following_count }}</span></a></li>
+                        <li class="nav-item"><a href="{% url 'microposts:follower' %}" class="nav-link">Followers
+                            <span class="badge badge-secondary">{{ follower_count }}</span></a></li>       
                     </ul>  
                     <div class="table table-responsive">
                         <table id="post_list" class="table table-striped table-bordered table-hover">

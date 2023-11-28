@@ -13,18 +13,33 @@
                             <tr>
                                 <th class="text-center">ユーザー</th>
                                 <th class="text-center">画像</th>
+                                <th class="text-center">フォロー</th>
                             </tr>        
                             </thead>  
                             <tbody>
                                 {% for item in object_list %}  
-                                    <td class="text-center" style="width: 50%">{{ item.username }}</td>
-                                    <td class="text-center" style="width: 50%">
+                                    <tr class="odd gradeX text-center">
+                                    <td class="text-center" style="width: 30%">{{ item.username }}</td>
+                                    <td class="text-center" style="width: 30%">
                                 {% if item.avatar %}
                                         <img class="rounded img-fluid mx-auto d-block" src="{{ item.avatar.url }}"
                                         id="avatar-thumbnail" alt="avatar_thumbnail">
                                 {% else %}
                                     <img class="rounded img-fluid mx-auto d-block" alt="avatar_thumbnail">
                                 {% endif %}</td>
+                                <td class="text-center" style="width: 40%">
+                                    {% if item in following_list %}
+                                    <form action="{% url 'accounts:rm_relation' pk=item.id %}" method="post">
+                                        <button type="submit" class="btn btn-outlune-danger btn-sm" name="button">Unfollow</button>
+                                    {% csrf_token %}
+                                    </form>
+                                    {% else %}
+                                    <form action="{% url 'accounts:mk_relation' pk=item.id %}" method="post">
+                                        <button type="submit" class="btn btn_outline-primary btn-sm" name="button">Follow</button>
+                                    {% csrf_token %}
+                                    </form>
+                                    {% endif %}
+                                </td>            
                                     </tr>
                                 {% endfor %}
                             </tbody>                     

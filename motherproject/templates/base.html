@@ -36,8 +36,8 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <a class="dropdown-item" href="{% url 'microposts:myposts' %}">My posts</a>
-                        <a class="dropdown-item" href="#">Following</a>
-                        <a class="dropdown-item" href="#">Follower</a>
+                        <a class="dropdown-item" href="{% url 'microposts:following' %}">Following</a>
+                        <a class="dropdown-item" href="{% url 'microposts:follower' %}">Follower</a>
                     </div>
                 </li>{% endif %}
             </ul>
