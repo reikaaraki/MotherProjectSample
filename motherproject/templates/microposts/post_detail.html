@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block content %}
+{% block content %}      
     <div class="content-wrapper">
         <div class="container-fluid">
             <div class="row">
@@ -11,16 +11,32 @@
                             </li>    
                         {% endfor %}
                     {% endif %}
+                    <h2> 記事詳細ページ </h2>
+                        <div class="title">
+                         <h6>タイトル</h6>{{ post.title }}
+                        </div>
+                        <div class="content">
+                          <h6>本文</h6>{{ post.content }}
+                        </div>  
                     <div class="card">
                         <div class="card-header">
-                            <h4><b>新規投稿</b></h4>
+                            <h4><b>コメント</b></h4>
                         </div>    
                         <div class="card-body">
                             <form method="post">
                                 {% csrf_token %}
-                                {% bootstrap_form form %}
+                                {% bootstrap_form comment_form %}
                                 <button type="submit" class = "btn btn-outline-primary btn-block">投稿する</button>
-                            </form>        
+                            </form>            
+                        </div>    
+                        <div class="comment">
+                            <h2>コメント一覧</h2>
+                            {% for comment in post.comment_set.all %}
+                            <div class="comment-content">
+                                <p>{{ comment.post }}:{{ comment.created_at }}</p>
+                                <p>{{ comment.content }}</p>
+                            </div>    
+                            {% endfor %}    
                         </div>    
                     </div>        
                 </div>    
@@ -28,6 +44,4 @@
         </div>    
     </div>    
 {% endblock %}    
-
-
 

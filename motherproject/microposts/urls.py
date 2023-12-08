@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import (
     PostCreateView, PostListView, PostUpdateView, PostDeleteView, MyPostsView,
-    FollowersView,FollowingView,
+    FollowersView, FollowingView, PostDetailView, CommentCreateView,
 )
 from . import views
 app_name = 'microposts'
@@ -13,4 +13,6 @@ urlpatterns = [
     path('myposts/', MyPostsView.as_view(), name='myposts'),
     path('follower/', FollowersView.as_view(), name='follower'),
     path('following/', FollowingView.as_view(), name='following'),
+    path('post_detail/<int:pk>/', PostDetailView.as_view(), name='post_detail'),
+    path('comment/create/<int:pk>/', CommentCreateView.as_view(), name='comment_create'),
 ]

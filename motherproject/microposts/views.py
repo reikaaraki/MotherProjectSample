@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic.edit import CreateView, UpdateView
-from django.views.generic import ListView, DeleteView
+from django.views.generic import ListView, DeleteView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Post
-from .forms import PostCreateForm, PostUpdateForm
+from .models import Post, Comment
+from .forms import PostCreateForm, PostUpdateForm, CommentCreateForm
 from django.contrib import messages
 from django.urls import reverse_lazy
 from accounts.models import Relationship, User
@@ -30,7 +30,31 @@ class PostListView(LoginRequiredMixin, ListView):
     paginate_by = 3
 
     def get_queryset(self):
-        return Post.objects.all()
+        return Post.objects.all().order_by('-created_at')
+
+class PostDetailView(LoginRequiredMixin, DetailView):
+    model = Post
+    template_name = 'microposts/post_detail.html'    
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['comment_form'] = CommentCreateForm()
+        return context
+    
+class CommentCreateView(LoginRequiredMixin, CreateView):
+    model = Comment   
+    form_class = CommentCreateForm
+
+    def form_valid(self, form):
+        form.instance.post = self.request.user
+        post_pk = self.kwargs.get('pk')
+        post = get_object_or_404(Post, pk=post_pk)
+
+        comment = form.save(commit=False)
+        comment.target = post
+        comment.save()
+
+        return redirect('microposts:post_detail', pk=post_pk) 
     
 
 class PostUpdateView(LoginRequiredMixin, UpdateView):
