@@ -43,7 +43,7 @@ class CommentCreateForm(forms.ModelForm):
                 attrs={'rows': 5, 'cols': 30}
             ),
         } 
-        lavels = {
+        labels = {
             'text': '本文',
         }   
             

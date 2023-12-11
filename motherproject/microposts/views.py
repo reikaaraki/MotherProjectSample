@@ -46,12 +46,12 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
     form_class = CommentCreateForm
 
     def form_valid(self, form):
-        form.instance.post = self.request.user
         post_pk = self.kwargs.get('pk')
         post = get_object_or_404(Post, pk=post_pk)
 
         comment = form.save(commit=False)
         comment.target = post
+        comment.owner = self.request.user
         comment.save()
 
         return redirect('microposts:post_detail', pk=post_pk) 
@@ -67,7 +67,7 @@ class PostUpdateView(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy('microposts:update', kwargs={'pk': self.kwargs['pk']})
+        return reverse_lazy('microposts:post_detail', kwargs={'pk': self.kwargs['pk']})
 
     def form_invalid(self, form):
         messages.warning(self.request, '更新が失敗しました')
