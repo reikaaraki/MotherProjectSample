@@ -6,7 +6,7 @@
                 <div class="col-sm-6 offset-sm-3">
                     {% if messages %}
                         {% for message in messages %}
-                            <li{% if massage.tags %} class="{{ message.tags }}"{% endif %}>
+                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
                                 {{ message }}
                             </li>    
                         {% endfor %}
@@ -18,26 +18,30 @@
                         <div class="content">
                           <h6>本文</h6>{{ post.content }}
                         </div>  
+                        <div class="comment">
+                            <h2>コメント一覧</h2>
+                            {% if post.comment_set.all %}
+                            {% for comment in post.comment_set.all %}
+                            <div class="comment-content">
+                                <p>{{ comment.owner }}:{{ comment.created_at }}</p>
+                                <p>{{ comment.content }}</p>
+                            </div>    
+                            {% endfor %}   
+                            {% else %} 
+                                <p>No comments</p>
+                            {% endif %}    
+                        </div> 
                     <div class="card">
                         <div class="card-header">
                             <h4><b>コメント</b></h4>
                         </div>    
                         <div class="card-body">
-                            <form method="post">
+                            <form method="post" action="{% url 'microposts:comment_create' pk=post.pk %}">
                                 {% csrf_token %}
                                 {% bootstrap_form comment_form %}
                                 <button type="submit" class = "btn btn-outline-primary btn-block">投稿する</button>
                             </form>            
-                        </div>    
-                        <div class="comment">
-                            <h2>コメント一覧</h2>
-                            {% for comment in post.comment_set.all %}
-                            <div class="comment-content">
-                                <p>{{ comment.post }}:{{ comment.created_at }}</p>
-                                <p>{{ comment.content }}</p>
-                            </div>    
-                            {% endfor %}    
-                        </div>    
+                        </div>       
                     </div>        
                 </div>    
             </div>    

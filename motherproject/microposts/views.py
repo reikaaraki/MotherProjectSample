@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Post, Comment
 from .forms import PostCreateForm, PostUpdateForm, CommentCreateForm
 from django.contrib import messages
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from accounts.models import Relationship, User
 from django.db import models
 from django.contrib.auth.models import AbstractUser
@@ -39,22 +39,34 @@ class PostDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['comment_form'] = CommentCreateForm()
+        context['post'] = self.get_object()
         return context
     
+    def post(self, request, *args, **kwargs):
+        post = self.get_object()
+        comment_form = CommentCreateForm(request.POST)
+
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.owner = self.request.user
+            comment.target = post
+            comment.save()        
+
 class CommentCreateView(LoginRequiredMixin, CreateView):
     model = Comment   
     form_class = CommentCreateForm
+    template_name = 'microposts/comment_create.html'
 
     def form_valid(self, form):
         post_pk = self.kwargs.get('pk')
-        post = get_object_or_404(Post, pk=post_pk)
-
-        comment = form.save(commit=False)
-        comment.target = post
-        comment.owner = self.request.user
-        comment.save()
-
-        return redirect('microposts:post_detail', pk=post_pk) 
+        post = Post.objects.get(pk=post_pk)
+        form.instance.owner = self.request.user
+        form.instance.target = post
+        response = super().form_valid(form)
+        return response
+    
+    def get_success_url(self):
+        return reverse('microposts:post_detail', kwargs={'pk': self.kwargs['pk']})
     
 
 class PostUpdateView(LoginRequiredMixin, UpdateView):
@@ -90,7 +102,7 @@ class MyPostsView(LoginRequiredMixin, ListView):
     paginate_by = 3
 
     def get_queryset(self):
-        return Post.objects.filter(owner_id=self.request.user)
+        return Post.objects.filter(owner_id=self.request.user).order_by('-created_at')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

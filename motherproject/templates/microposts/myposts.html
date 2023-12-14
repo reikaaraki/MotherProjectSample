@@ -43,6 +43,7 @@
                             {% for item in object_list %}
                                 <tr class="text">
                                    <td class="text"><h6>@{{ item.created_at|date:"F j, Y H:i" }}</h6>
+                                    <h6>{{ item.title }}</h6>
                                    <td class="text-center align-middle">
                                        <a class="btn btn-outline-success btn-sm" href="{% url 'microposts:update' item.pk %}" role="button">更新</a>
                                        <a class="btn btn-outline-danger btn-sm" href="{% url 'microposts:delete' item.pk %}" role="button">削除</a>
@@ -52,7 +53,7 @@
                             </tbody>          
                         </table>        
                     </div>  
-                    {% bootstrap_pagination page_obj extra=request.GET.urlencode %}    
+                    {% bootstrap_pagination page_obj extra=request.GET.urlencode %}   
                 </div>     
             </div>    
         </div>    
