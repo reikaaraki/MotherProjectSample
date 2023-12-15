@@ -13,23 +13,17 @@
                     {% endif %}
                     <h2> 記事詳細ページ </h2>
                         <div class="title">
-                         <h6>タイトル</h6>{{ post.title }}
+                         <h4>タイトル</h4>{{ post.title }}
                         </div>
                         <div class="content">
-                          <h6>本文</h6>{{ post.content }}
+                          <h4>本文</h4>{{ post.content }}
                         </div>  
-                        <div class="comment">
+                        <div class="comments">
                             <h2>コメント一覧</h2>
-                            {% if post.comment_set.all %}
-                            {% for comment in post.comment_set.all %}
-                            <div class="comment-content">
-                                <p>{{ comment.owner }}:{{ comment.created_at }}</p>
-                                <p>{{ comment.content }}</p>
-                            </div>    
-                            {% endfor %}   
-                            {% else %} 
-                                <p>No comments</p>
-                            {% endif %}    
+                            {% for comment in comments %}
+                            <p>{{ comment.owner }}:{{ comment.created_at }}</p>
+                            <p>{{ comment.text }}</p>    
+                            {% endfor %}
                         </div> 
                     <div class="card">
                         <div class="card-header">

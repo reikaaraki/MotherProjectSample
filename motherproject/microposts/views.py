@@ -40,6 +40,7 @@ class PostDetailView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         context['comment_form'] = CommentCreateForm()
         context['post'] = self.get_object()
+        context['comments'] = Comment.objects.filter(target=context['post'])
         return context
     
     def post(self, request, *args, **kwargs):
@@ -50,7 +51,9 @@ class PostDetailView(LoginRequiredMixin, DetailView):
             comment = comment_form.save(commit=False)
             comment.owner = self.request.user
             comment.target = post
-            comment.save()        
+            comment.save()    
+
+        return self.render_to_response(self.get_context_data())      
 
 class CommentCreateView(LoginRequiredMixin, CreateView):
     model = Comment   

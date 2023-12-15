@@ -3,17 +3,24 @@ from django.db import models
 from django.urls import reverse_lazy
 
 class UserManager(BaseUserManager):
-    def create_user(self, username, email, password=None, age=None):
+    def create_user(self, username, email, password=None, age=None, **extra_fields):
         if not email:
             raise ValueError('Enter Email') 
         user = self.model(
             username=username,
             email=email,
-            age=age
+            age=age,
+            **extra_fields,
         )
         user.set_password(password) 
         user.save(using=self._db) 
         return user
+    
+    def create_superuser(self, username, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        return self.create_user(username, email, password, **extra_fields)
 
 class User(AbstractUser, PermissionsMixin):
     username = models.CharField(max_length=50, unique=True)
