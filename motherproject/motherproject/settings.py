@@ -27,9 +27,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-r$!&k_=1gn)pz7o0i(22@98i+@%7y6^)7g=4$k9^$zvy!_n4h)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhose', 'pythonanywhere.com','reikaaraki.pythonanywhere.com']
 
 
 # Application definition
@@ -159,3 +159,9 @@ AUTH_USER_MODEL = 'accounts.User'
 LOGIN_URL = '/accounts/login'
 LOGIN_REDIRECT_URL = '/accounts/userlist'
 LOGOUT_REDIRECT_URL = '/accounts/login'
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
+from django.core.management.utils import get_random_secret_key
+SECRET_KEY = get_random_secret_key()
